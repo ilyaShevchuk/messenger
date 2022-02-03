@@ -1,0 +1,25 @@
+- hosts: localhost
+  connection: local
+  tasks:
+    - name: Create and start services
+      shell: "./env/bin/docker-compose -f docker-compose.yml up -d"
+
+#    - name: Print logs api
+#      shell: ./env/bin/docker-compose logs api
+#      register: log_out_app
+#      - debug:
+#          msg: "{{ log_out_app.stdout_lines }}"
+#
+#    - name: Print logs pg
+#      shell: ./env/bin/docker-compose logs pg
+#      register: log_out_pg
+#      - debug:
+#          msg: "{{ log_out_db.stdout_lines }}"
+
+    - name: "Pause for 120 seconds"
+      pause:
+        seconds: 120
+
+    - name: "app : check"
+      shell: "[ $(curl http://localhost:{{ lookup('env', 'APP_PORT') }}/ping_db -o /dev/stderr -w '%{http_code}') -eq 200 ] && exit 0 || exit 1"
+
